@@ -4,8 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "somflow"
-version = "0.2.0"
+version = "0.2.1"
 description = "SoM (Set-of-Mark) detection pipeline for macOS — Apple Vision + Florence-2 on MLX"
+readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10"
 authors = [{name = "Swaylen Hayes"}]
@@ -32,6 +33,11 @@ coreml = [
     "coremltools>=8.0",
     "torch>=2.0",
 ]
+
+[project.urls]
+Homepage = "https://github.com/swaylenhayes/somflow"
+Repository = "https://github.com/swaylenhayes/somflow"
+Issues = "https://github.com/swaylenhayes/somflow/issues"
 
 [project.scripts]
 somflow = "somflow.cli:main"
