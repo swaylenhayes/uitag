@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "somflow"
-version = "0.2.1"
+version = "0.2.2"
 description = "SoM (Set-of-Mark) detection pipeline for macOS — Apple Vision + Florence-2 on MLX"
 readme = "README.md"
 license = "MIT"

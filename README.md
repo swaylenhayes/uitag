@@ -4,7 +4,7 @@
 
 A Set-of-Mark (SoM) detection pipeline for macOS that transforms screenshots into structured, annotated element maps. Built for Apple Silicon using Apple Vision Framework and Florence-2 on MLX.
 
-![SomFlow output — 151 UI elements detected on a 1920x1080 screenshot](docs/examples/vscode-som.png)
+![SomFlow output — 151 UI elements detected on a 1920x1080 screenshot](https://raw.githubusercontent.com/swaylenhayes/somflow/main/docs/examples/vscode-som.png)
 
 *151 numbered elements detected in ~0.8s — text labels (Apple Vision), rectangles, icons, and buttons (Florence-2). [Full manifest JSON →](docs/examples/vscode-manifest.json)*
 
