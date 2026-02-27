@@ -1,9 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 """Tests for Apple Vision detection (Swift subprocess)."""
 
+import pytest
+
 from somflow.vision import run_vision_detect
 
 
+@pytest.mark.slow
 def test_vision_detect_returns_detections(screenshot_path):
     """Vision detection returns a non-empty list of Detection objects."""
     detections, timing = run_vision_detect(screenshot_path)
@@ -24,6 +27,7 @@ def test_vision_detect_returns_detections(screenshot_path):
     assert timing["vision_time_ms"] > 0
 
 
+@pytest.mark.slow
 def test_vision_detect_finds_text(screenshot_path):
     """At least one vision_text detection should be present."""
     detections, _ = run_vision_detect(screenshot_path)
@@ -36,6 +40,7 @@ def test_vision_detect_finds_text(screenshot_path):
         assert len(d.label) > 0, "Text detection label should not be empty"
 
 
+@pytest.mark.slow
 def test_vision_detect_on_simple_image(simple_image_path):
     """Basic sanity check on a simple image."""
     detections, timing = run_vision_detect(simple_image_path)
