@@ -87,16 +87,18 @@ Measured on M2 Max (96GB) with 1920x1080 VS Code screenshot:
 | Apple Vision (accurate) | 980ms | ANE, no GPU contention |
 | Apple Vision (fast) | 189ms | 5x faster, quality tradeoff |
 | Object-aware split | <1ms | CPU only, trivial |
-| Florence-2 (4 quadrants) | ~3200ms | ~800ms/quadrant, sequential |
+| Florence-2 (4 quadrants) | ~600ms | ~148ms/quadrant, sequential (optimized MLX) |
 | Merge + dedup | <1ms | CPU only |
 | SoM annotation | <10ms | Pillow drawing |
 | Manifest generation | <1ms | JSON serialization |
-| **Total (accurate)** | **~4200ms** | |
-| **Total (fast)** | **~3300ms** | |
+| **Total (accurate)** | **~1600ms** | |
+| **Total (fast)** | **~800ms** | |
+
+**Pre-optimization baseline** (v0.1.0): Florence-2 ran at ~800ms/quadrant (~3200ms total). MLX optimizations (pre-saved temp files, warm inference) achieved a 4.9x speedup.
 
 ### Bottleneck
 
-Florence-2 inference at ~800ms per quadrant is the dominant cost. The quadrants run sequentially (MLX doesn't benefit from parallel inference on the same GPU). CoreML acceleration could reduce this to ~100ms/quadrant — planned but not yet implemented.
+Florence-2 inference at ~148ms per quadrant is now well-optimized. CoreML backend is available (`--backend coreml`) and offloads to the ANE, which is beneficial under GPU contention but slightly slower (~186ms/quadrant) on an idle GPU.
 
 ### Co-hosting Validation
 

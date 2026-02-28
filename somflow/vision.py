@@ -9,10 +9,18 @@ from pathlib import Path
 
 from somflow.types import Detection
 
-# Prefer compiled binary; fall back to Swift interpreter.
-_TOOLS_DIR = Path(__file__).resolve().parent.parent / "tools"
-_SWIFT_BINARY = _TOOLS_DIR / "vision-detect"
-_SWIFT_SOURCE = _TOOLS_DIR / "vision-detect.swift"
+# Resolve tool paths. The Swift source ships inside the package (somflow/tools/)
+# so pip installs work. The compiled binary may exist in the repo root (tools/)
+# for dev installs — check both locations.
+_PKG_TOOLS = Path(__file__).resolve().parent / "tools"
+_REPO_TOOLS = Path(__file__).resolve().parent.parent / "tools"
+
+_SWIFT_BINARY = (
+    _PKG_TOOLS / "vision-detect"
+    if (_PKG_TOOLS / "vision-detect").exists()
+    else _REPO_TOOLS / "vision-detect"
+)
+_SWIFT_SOURCE = _PKG_TOOLS / "vision-detect.swift"
 
 
 def run_vision_detect(

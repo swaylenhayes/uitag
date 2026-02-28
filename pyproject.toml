@@ -46,6 +46,9 @@ somflow = "somflow.cli:main"
 where = ["."]
 include = ["somflow*"]
 
+[tool.setuptools.package-data]
+somflow = ["tools/*.swift"]
+
 [tool.ruff]
 line-length = 88
 
