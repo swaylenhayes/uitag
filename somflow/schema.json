@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/swaylenhayes/somflow/blob/main/somflow/schema.json",
+  "title": "SomFlow Manifest",
+  "description": "Output manifest from the SomFlow detection pipeline",
+  "type": "object",
+  "required": ["image_width", "image_height", "element_count", "elements"],
+  "properties": {
+    "image_width": {
+      "type": "integer",
+      "description": "Width of the input image in pixels",
+      "minimum": 1
+    },
+    "image_height": {
+      "type": "integer",
+      "description": "Height of the input image in pixels",
+      "minimum": 1
+    },
+    "element_count": {
+      "type": "integer",
+      "description": "Number of detected elements",
+      "minimum": 0
+    },
+    "elements": {
+      "type": "array",
+      "description": "Detected UI elements",
+      "items": {
+        "type": "object",
+        "required": ["som_id", "label", "bbox", "confidence", "source"],
+        "properties": {
+          "som_id": {
+            "type": "integer",
+            "description": "Unique SoM identifier (1-indexed)",
+            "minimum": 1
+          },
+          "label": {
+            "type": "string",
+            "description": "Element label (text content or detection class)"
+          },
+          "bbox": {
+            "type": "object",
+            "required": ["x", "y", "width", "height"],
+            "properties": {
+              "x": { "type": "integer", "minimum": 0 },
+              "y": { "type": "integer", "minimum": 0 },
+              "width": { "type": "integer", "minimum": 1 },
+              "height": { "type": "integer", "minimum": 1 }
+            },
+            "additionalProperties": false
+          },
+          "confidence": {
+            "type": "number",
+            "description": "Detection confidence score",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "source": {
+            "type": "string",
+            "description": "Detection source",
+            "enum": ["vision_text", "vision_rect", "florence2"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "timing_ms": {
+      "type": "object",
+      "description": "Pipeline timing breakdown in milliseconds"
+    }
+  },
+  "additionalProperties": false
+}

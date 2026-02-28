@@ -28,6 +28,7 @@ dev = [
     "pytest>=7.0.0",
     "pytest-benchmark>=4.0.0",
     "ruff>=0.1.0",
+    "jsonschema>=4.0.0",
 ]
 coreml = [
     "coremltools>=8.0",
@@ -47,7 +48,7 @@ where = ["."]
 include = ["somflow*"]
 
 [tool.setuptools.package-data]
-somflow = ["tools/*.swift"]
+somflow = ["tools/*.swift", "*.json"]
 
 [tool.ruff]
 line-length = 88
