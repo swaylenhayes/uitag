@@ -6,10 +6,10 @@ from pathlib import Path
 import jsonschema
 import pytest
 
-from somflow.manifest import generate_manifest
-from somflow.types import Detection, PipelineResult
+from uitag.manifest import generate_manifest
+from uitag.types import Detection, PipelineResult
 
-SCHEMA_PATH = Path(__file__).parent.parent / "somflow" / "schema.json"
+SCHEMA_PATH = Path(__file__).parent.parent / "uitag" / "schema.json"
 
 
 @pytest.fixture

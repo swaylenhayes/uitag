@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""SomFlow — CLI entry point.
+"""uitag — CLI entry point.
 
 Usage:
-    somflow <image-path> [--output-dir <dir>]
+    uitag <image-path> [--output-dir <dir>]
     python detect.py <image-path> [--output-dir <dir>]
 """
 
@@ -12,11 +12,11 @@ import sys
 import time
 from pathlib import Path
 
-from somflow.run import run_pipeline
+from uitag.run import run_pipeline
 
 
 def main():
-    parser = argparse.ArgumentParser(description="SomFlow Detection Pipeline")
+    parser = argparse.ArgumentParser(description="uitag Detection Pipeline")
     parser.add_argument("image", help="Path to screenshot")
     parser.add_argument("--output-dir", "-o", default=".", help="Output directory")
     parser.add_argument("--task", default="<OD>", help="Florence-2 task token")
@@ -43,7 +43,7 @@ def main():
     out_dir = Path(args.output_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    from somflow.backends.selector import BackendPreference, select_backend
+    from uitag.backends.selector import BackendPreference, select_backend
 
     preference = BackendPreference(args.backend)
     backend = select_backend(preference=preference)

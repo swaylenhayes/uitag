@@ -3,7 +3,7 @@
 
 import pytest
 
-from somflow.vision import run_vision_detect
+from uitag.vision import run_vision_detect
 
 
 @pytest.mark.slow

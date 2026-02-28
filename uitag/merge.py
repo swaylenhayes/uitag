@@ -1,6 +1,6 @@
 """Detection merging and deduplication."""
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 SOURCE_PRIORITY = {
     "vision_text": 3,

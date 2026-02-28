@@ -2,7 +2,7 @@
 
 import json
 
-from somflow.types import PipelineResult
+from uitag.types import PipelineResult
 
 
 def generate_manifest(result: PipelineResult) -> str:

@@ -4,7 +4,7 @@ from unittest.mock import patch, MagicMock
 
 from PIL import Image
 
-from somflow.backends.mlx_backend import MLXBackend
+from uitag.backends.mlx_backend import MLXBackend
 
 
 def test_batch_detect_produces_same_results_as_sequential():
@@ -15,8 +15,8 @@ def test_batch_detect_produces_same_results_as_sequential():
     mock_output.text = "button<loc_100><loc_200><loc_300><loc_400>"
 
     with (
-        patch("somflow.backends.mlx_backend.generate") as mock_gen,
-        patch("somflow.backends.mlx_backend._load_model") as mock_load,
+        patch("uitag.backends.mlx_backend.generate") as mock_gen,
+        patch("uitag.backends.mlx_backend._load_model") as mock_load,
     ):
         mock_gen.return_value = mock_output
         mock_load.return_value = (MagicMock(), MagicMock())
@@ -48,8 +48,8 @@ def test_batch_detect_translates_coordinates():
     mock_output.text = "icon<loc_100><loc_200><loc_300><loc_400>"
 
     with (
-        patch("somflow.backends.mlx_backend.generate") as mock_gen,
-        patch("somflow.backends.mlx_backend._load_model") as mock_load,
+        patch("uitag.backends.mlx_backend.generate") as mock_gen,
+        patch("uitag.backends.mlx_backend._load_model") as mock_load,
     ):
         mock_gen.return_value = mock_output
         mock_load.return_value = (MagicMock(), MagicMock())
@@ -72,8 +72,8 @@ def test_batch_detect_records_per_quadrant_timing():
     mock_output.text = ""
 
     with (
-        patch("somflow.backends.mlx_backend.generate") as mock_gen,
-        patch("somflow.backends.mlx_backend._load_model") as mock_load,
+        patch("uitag.backends.mlx_backend.generate") as mock_gen,
+        patch("uitag.backends.mlx_backend._load_model") as mock_load,
     ):
         mock_gen.return_value = mock_output
         mock_load.return_value = (MagicMock(), MagicMock())

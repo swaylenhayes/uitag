@@ -1,6 +1,6 @@
 """Tests for the backend protocol."""
 
-from somflow.backends.base import DetectionBackend, BackendInfo
+from uitag.backends.base import DetectionBackend, BackendInfo
 
 
 def test_backend_info_fields():

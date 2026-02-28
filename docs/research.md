@@ -1,6 +1,6 @@
 # Research Notes
 
-Technical context behind SomFlow's architecture decisions.
+Technical context behind uitag's architecture decisions.
 
 ## Model Selection
 

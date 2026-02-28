@@ -1,8 +1,8 @@
 """Tests for SoM annotation renderer."""
 
 from PIL import Image
-from somflow.types import Detection
-from somflow.annotate import render_som
+from uitag.types import Detection
+from uitag.annotate import render_som
 
 
 def test_render_som_returns_image():

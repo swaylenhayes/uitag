@@ -8,9 +8,9 @@ import time
 
 from PIL import Image
 
-from somflow.backends.base import BackendInfo
-from somflow.florence import _load_model, parse_location_tokens
-from somflow.types import Detection
+from uitag.backends.base import BackendInfo
+from uitag.florence import _load_model, parse_location_tokens
+from uitag.types import Detection
 
 # Lazy-loaded at first use; module-level so tests can patch it.
 generate = None

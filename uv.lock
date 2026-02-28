@@ -2688,42 +2688,6 @@ wheels = [
 ]
 
 [[package]]
-name = "somflow"
-version = "0.2.2"
-source = { editable = "." }
-dependencies = [
-    { name = "mlx-vlm" },
-    { name = "pillow" },
-    { name = "transformers" },
-]
-
-[package.optional-dependencies]
-coreml = [
-    { name = "coremltools" },
-    { name = "torch" },
-]
-dev = [
-    { name = "jsonschema" },
-    { name = "pytest" },
-    { name = "pytest-benchmark" },
-    { name = "ruff" },
-]
-
-[package.metadata]
-requires-dist = [
-    { name = "coremltools", marker = "extra == 'coreml'", specifier = ">=8.0" },
-    { name = "jsonschema", marker = "extra == 'dev'", specifier = ">=4.0.0" },
-    { name = "mlx-vlm", specifier = ">=0.3.12" },
-    { name = "pillow", specifier = ">=10.0.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
-    { name = "pytest-benchmark", marker = "extra == 'dev'", specifier = ">=4.0.0" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
-    { name = "torch", marker = "extra == 'coreml'", specifier = ">=2.0" },
-    { name = "transformers", specifier = ">=5.0.0" },
-]
-provides-extras = ["dev", "coreml"]
-
-[[package]]
 name = "soundfile"
 version = "0.13.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3021,6 +2985,42 @@ sdist = { url = "https://files.pythonhosted.org/packages/5e/a7/c202b344c5ca7daf3
 wheels = [
     { url = "https://files.pythonhosted.org/packages/c7/b0/003792df09decd6849a5e39c28b513c06e84436a54440380862b5aeff25d/tzdata-2025.3-py2.py3-none-any.whl", hash = "sha256:06a47e5700f3081aab02b2e513160914ff0694bce9947d6b76ebd6bf57cfc5d1", size = 348521, upload-time = "2025-12-13T17:45:33.889Z" },
 ]
+
+[[package]]
+name = "uitag"
+version = "0.2.3"
+source = { editable = "." }
+dependencies = [
+    { name = "mlx-vlm" },
+    { name = "pillow" },
+    { name = "transformers" },
+]
+
+[package.optional-dependencies]
+coreml = [
+    { name = "coremltools" },
+    { name = "torch" },
+]
+dev = [
+    { name = "jsonschema" },
+    { name = "pytest" },
+    { name = "pytest-benchmark" },
+    { name = "ruff" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "coremltools", marker = "extra == 'coreml'", specifier = ">=8.0" },
+    { name = "jsonschema", marker = "extra == 'dev'", specifier = ">=4.0.0" },
+    { name = "mlx-vlm", specifier = ">=0.3.12" },
+    { name = "pillow", specifier = ">=10.0.0" },
+    { name = "pytest", marker = "extra == 'dev'", specifier = ">=7.0.0" },
+    { name = "pytest-benchmark", marker = "extra == 'dev'", specifier = ">=4.0.0" },
+    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
+    { name = "torch", marker = "extra == 'coreml'", specifier = ">=2.0" },
+    { name = "transformers", specifier = ">=5.0.0" },
+]
+provides-extras = ["dev", "coreml"]
 
 [[package]]
 name = "urllib3"

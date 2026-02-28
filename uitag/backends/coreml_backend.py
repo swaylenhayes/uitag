@@ -21,9 +21,9 @@ from pathlib import Path
 
 from PIL import Image
 
-from somflow.backends.base import BackendInfo
-from somflow.florence import parse_location_tokens
-from somflow.types import Detection
+from uitag.backends.base import BackendInfo
+from uitag.florence import parse_location_tokens
+from uitag.types import Detection
 
 # Lazy-loaded at first use.
 _generate = None
@@ -86,7 +86,7 @@ class CoreMLBackend:
                 compute_units=ct.ComputeUnit.ALL,
             )
 
-        from somflow.florence import _load_model
+        from uitag.florence import _load_model
 
         model, processor = _load_model()
         self._mlx_model = model
@@ -122,7 +122,7 @@ class CoreMLBackend:
 
         import numpy as np
 
-        from somflow.backends.encoder_bridge import coreml_to_mlx_embeddings
+        from uitag.backends.encoder_bridge import coreml_to_mlx_embeddings
 
         all_dets: list[Detection] = []
         per_quad_ms: list[float] = []

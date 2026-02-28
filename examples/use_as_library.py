@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Use SomFlow as a Python library.
+"""Use uitag as a Python library.
 
 Prerequisites:
-    pip install somflow
+    pip install uitag
     macOS with Apple Silicon (Apple Vision + MLX)
 
 Usage:
@@ -12,7 +12,7 @@ Usage:
 import sys
 from pathlib import Path
 
-from somflow import run_pipeline
+from uitag import run_pipeline
 
 
 def main():

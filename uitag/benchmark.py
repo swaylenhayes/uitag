@@ -57,8 +57,8 @@ def run_benchmark(
         List of BenchmarkResult, one per measured run.
     """
     from PIL import Image as PILImage
-    from somflow.quadrants import split_object_aware
-    from somflow.vision import run_vision_detect
+    from uitag.quadrants import split_object_aware
+    from uitag.vision import run_vision_detect
 
     # Prepare quadrants once
     img = PILImage.open(image_path)

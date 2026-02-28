@@ -4,12 +4,12 @@ import time
 
 from PIL import Image
 
-from somflow.types import PipelineResult
-from somflow.vision import run_vision_detect
-from somflow.quadrants import split_object_aware
-from somflow.merge import merge_detections
-from somflow.annotate import render_som
-from somflow.manifest import generate_manifest
+from uitag.types import PipelineResult
+from uitag.vision import run_vision_detect
+from uitag.quadrants import split_object_aware
+from uitag.merge import merge_detections
+from uitag.annotate import render_som
+from uitag.manifest import generate_manifest
 
 
 def run_pipeline(
@@ -57,7 +57,7 @@ def run_pipeline(
 
     # Stage 3: Florence-2 via backend
     if backend is None:
-        from somflow.backends.mlx_backend import MLXBackend
+        from uitag.backends.mlx_backend import MLXBackend
 
         backend = MLXBackend()
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-"""Write a custom detection backend for SomFlow.
+"""Write a custom detection backend for uitag.
 
 This example shows how to implement the DetectionBackend protocol
 to plug in your own inference engine (ONNX, TensorRT, a remote API, etc.)
-without modifying any SomFlow internals.
+without modifying any uitag internals.
 
 Prerequisites:
-    pip install somflow
+    pip install uitag
     macOS with Apple Silicon (Apple Vision still runs Stage 1)
 
 Usage:
@@ -18,8 +18,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from somflow import run_pipeline, Detection
-from somflow.backends.base import BackendInfo, DetectionBackend
+from uitag import run_pipeline, Detection
+from uitag.backends.base import BackendInfo, DetectionBackend
 
 
 class GridBackend:

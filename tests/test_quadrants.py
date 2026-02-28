@@ -1,14 +1,14 @@
 """Tests for image tiling (fixed quadrants and object-aware)."""
 
 from PIL import Image
-from somflow.quadrants import (
+from uitag.quadrants import (
     split_quadrants,
     split_object_aware,
     _find_best_split,
     QuadrantInfo,
     SplitInfo,
 )
-from somflow.types import Detection
+from uitag.types import Detection
 
 
 # --- Fixed quadrant tests (existing) ---

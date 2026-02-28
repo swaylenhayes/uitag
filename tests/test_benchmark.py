@@ -1,7 +1,7 @@
 """Benchmark tests for detection backends."""
 
 import pytest
-from somflow.benchmark import BenchmarkResult
+from uitag.benchmark import BenchmarkResult
 
 
 def test_benchmark_result_fields():

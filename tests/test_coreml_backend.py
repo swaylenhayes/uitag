@@ -5,15 +5,15 @@ import os
 import pytest
 from PIL import Image
 
-from somflow.backends.base import DetectionBackend
-from somflow.types import Detection
+from uitag.backends.base import DetectionBackend
+from uitag.types import Detection
 
 COREML_MODEL_PATH = "models/davit_encoder.mlpackage"
 
 
 def test_coreml_backend_unavailable_without_model():
     """CoreML backend should report unavailable if model file missing."""
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     backend = CoreMLBackend(model_path="nonexistent.mlpackage")
     info = backend.info()
@@ -22,14 +22,14 @@ def test_coreml_backend_unavailable_without_model():
 
 
 def test_coreml_backend_is_detection_backend():
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     backend = CoreMLBackend(model_path="nonexistent.mlpackage")
     assert isinstance(backend, DetectionBackend)
 
 
 def test_coreml_backend_raises_on_detect_when_unavailable():
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     backend = CoreMLBackend(model_path="nonexistent.mlpackage")
     img = Image.new("RGB", (100, 100), "white")
@@ -40,7 +40,7 @@ def test_coreml_backend_raises_on_detect_when_unavailable():
 
 def test_coreml_backend_empty_quadrants():
     """CoreML backend should return empty list for empty input."""
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     CoreMLBackend(model_path="nonexistent.mlpackage")
     # Empty quadrants should return [] without checking availability
@@ -53,7 +53,7 @@ def test_coreml_backend_produces_detections():
     if not os.path.exists(COREML_MODEL_PATH):
         pytest.skip("CoreML model not found. Run: python tools/convert_davit_coreml.py")
 
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     backend = CoreMLBackend(model_path=COREML_MODEL_PATH)
     assert backend.info().available is True
@@ -78,7 +78,7 @@ def test_coreml_backend_timing():
     if not os.path.exists(COREML_MODEL_PATH):
         pytest.skip("CoreML model not found. Run: python tools/convert_davit_coreml.py")
 
-    from somflow.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
 
     backend = CoreMLBackend(model_path=COREML_MODEL_PATH)
     img = Image.new("RGB", (200, 200), "gray")

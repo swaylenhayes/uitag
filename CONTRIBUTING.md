@@ -1,11 +1,11 @@
-# Contributing to SomFlow
+# Contributing to uitag
 
 ## Quick Start
 
 ```bash
 # Clone and install
-git clone https://github.com/swaylenhayes/somflow.git
-cd somflow
+git clone https://github.com/swaylenhayes/uitag.git
+cd uitag
 uv pip install -e ".[dev]"
 
 # Run tests
@@ -18,7 +18,7 @@ pre-commit install
 
 ## Architecture
 
-SomFlow runs a 6-stage detection pipeline:
+uitag runs a 6-stage detection pipeline:
 
 ```
 Screenshot → [1] Apple Vision → [2] Tiling → [3] Florence-2 → [4] Merge → [5] Annotate → [6] Manifest
@@ -26,14 +26,14 @@ Screenshot → [1] Apple Vision → [2] Tiling → [3] Florence-2 → [4] Merge 
 
 | Module | What it does |
 |--------|-------------|
-| `somflow/vision.py` | Apple Vision via Swift subprocess (text + rectangles) |
-| `somflow/quadrants.py` | Object-aware image tiling (avoids splitting UI elements) |
-| `somflow/florence.py` | Florence-2 detection token parsing |
-| `somflow/merge.py` | IoU-based deduplication with source priority |
-| `somflow/annotate.py` | SoM numbered overlay rendering |
-| `somflow/manifest.py` | JSON manifest generation |
-| `somflow/run.py` | Pipeline orchestrator — `run_pipeline()` is the main entry point |
-| `somflow/backends/` | `DetectionBackend` protocol + MLX/CoreML implementations |
+| `uitag/vision.py` | Apple Vision via Swift subprocess (text + rectangles) |
+| `uitag/quadrants.py` | Object-aware image tiling (avoids splitting UI elements) |
+| `uitag/florence.py` | Florence-2 detection token parsing |
+| `uitag/merge.py` | IoU-based deduplication with source priority |
+| `uitag/annotate.py` | SoM numbered overlay rendering |
+| `uitag/manifest.py` | JSON manifest generation |
+| `uitag/run.py` | Pipeline orchestrator — `run_pipeline()` is the main entry point |
+| `uitag/backends/` | `DetectionBackend` protocol + MLX/CoreML implementations |
 
 ## Making Changes
 
@@ -54,8 +54,8 @@ Tests marked `@pytest.mark.slow` need the Florence-2 model and a macOS system wi
 ## What's Welcome
 
 - **Bug fixes** — especially around edge cases in detection merging or tiling
-- **New backends** — implement `DetectionBackend` protocol (see `somflow/backends/base.py`)
+- **New backends** — implement `DetectionBackend` protocol (see `uitag/backends/base.py`)
 - **Test coverage** — more edge cases for quadrant splitting, IoU merging
 - **Documentation** — examples, tutorials, manifest format docs
 
-See [open issues](https://github.com/swaylenhayes/somflow/issues) for specific ideas.
+See [open issues](https://github.com/swaylenhayes/uitag/issues) for specific ideas.

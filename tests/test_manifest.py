@@ -1,8 +1,8 @@
 """Tests for text manifest generation."""
 
 import json
-from somflow.types import Detection, PipelineResult
-from somflow.manifest import generate_manifest
+from uitag.types import Detection, PipelineResult
+from uitag.manifest import generate_manifest
 
 
 def test_manifest_structure():

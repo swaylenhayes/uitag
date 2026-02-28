@@ -1,7 +1,7 @@
 """Tests for Florence-2 detection wrapper."""
 
 import pytest
-from somflow.florence import parse_location_tokens
+from uitag.florence import parse_location_tokens
 
 
 def test_parse_location_tokens_single():
@@ -29,8 +29,8 @@ def test_parse_location_tokens_empty():
 
 @pytest.mark.slow
 def test_detect_elements_on_simple_image(simple_image_path):
-    from somflow.florence import detect_elements
-    from somflow.types import Detection
+    from uitag.florence import detect_elements
+    from uitag.types import Detection
 
     detections = detect_elements(simple_image_path)
     assert isinstance(detections, list)

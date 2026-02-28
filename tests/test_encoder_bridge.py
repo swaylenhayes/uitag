@@ -11,7 +11,7 @@ def test_coreml_to_mlx_nchw_conversion():
     except ImportError:
         pytest.skip("MLX not available")
 
-    from somflow.backends.encoder_bridge import coreml_to_mlx_embeddings
+    from uitag.backends.encoder_bridge import coreml_to_mlx_embeddings
 
     # Simulate CoreML vision tower output: [1, 1024, 24, 24]
     fake_output = {"output": np.random.randn(1, 1024, 24, 24).astype(np.float32)}
@@ -28,7 +28,7 @@ def test_coreml_to_mlx_sequence_passthrough():
     except ImportError:
         pytest.skip("MLX not available")
 
-    from somflow.backends.encoder_bridge import coreml_to_mlx_embeddings
+    from uitag.backends.encoder_bridge import coreml_to_mlx_embeddings
 
     # Already in sequence format: [1, 576, 1024]
     fake_output = {"embeddings": np.random.randn(1, 576, 1024).astype(np.float32)}
@@ -44,7 +44,7 @@ def test_coreml_to_mlx_auto_key():
     except ImportError:
         pytest.skip("MLX not available")
 
-    from somflow.backends.encoder_bridge import coreml_to_mlx_embeddings
+    from uitag.backends.encoder_bridge import coreml_to_mlx_embeddings
 
     fake_output = {"layer_norm_52": np.random.randn(1, 1024, 24, 24).astype(np.float16)}
     result = coreml_to_mlx_embeddings(fake_output)

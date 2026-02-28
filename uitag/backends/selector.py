@@ -6,7 +6,7 @@ import logging
 from enum import Enum
 from pathlib import Path
 
-from somflow.backends.base import DetectionBackend
+from uitag.backends.base import DetectionBackend
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +55,7 @@ def select_backend(
 
     if preference == BackendPreference.COREML:
         if _coreml_available(model_path):
-            from somflow.backends.coreml_backend import CoreMLBackend
+            from uitag.backends.coreml_backend import CoreMLBackend
 
             logger.info("Using CoreML backend (ANE)")
             return CoreMLBackend(model_path=str(model_path))
@@ -67,7 +67,7 @@ def select_backend(
         # CoreML value is as GPU-offload when contended.
         logger.info("Auto-selecting MLX backend (default)")
 
-    from somflow.backends.mlx_backend import MLXBackend
+    from uitag.backends.mlx_backend import MLXBackend
 
     logger.info("Using MLX backend (GPU)")
     return MLXBackend()

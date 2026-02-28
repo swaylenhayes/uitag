@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://github.com/swaylenhayes/somflow/blob/main/somflow/schema.json",
-  "title": "SomFlow Manifest",
-  "description": "Output manifest from the SomFlow detection pipeline",
+  "$id": "https://github.com/swaylenhayes/uitag/blob/main/uitag/schema.json",
+  "title": "uitag Manifest",
+  "description": "Output manifest from the uitag detection pipeline",
   "type": "object",
   "required": ["image_width", "image_height", "element_count", "elements"],
   "properties": {

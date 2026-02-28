@@ -7,7 +7,7 @@ from typing import Protocol, runtime_checkable
 
 from PIL import Image
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 
 @dataclass

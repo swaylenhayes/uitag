@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from PIL import Image
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 
 @dataclass

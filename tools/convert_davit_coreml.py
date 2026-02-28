@@ -12,7 +12,7 @@ Usage:
     python tools/convert_davit_coreml.py [--output models/davit_encoder.mlpackage]
 
 Requires: torch==2.7.0, coremltools>=9.0, transformers>=5.0
-    uv pip install somflow[coreml]
+    uv pip install uitag[coreml]
 """
 
 from __future__ import annotations
@@ -47,7 +47,7 @@ def convert_davit_encoder(
         from transformers import Florence2ForConditionalGeneration
     except ImportError as e:
         print(f"Missing dependency: {e}")
-        print("Install with: uv pip install somflow[coreml]")
+        print("Install with: uv pip install uitag[coreml]")
         return False
 
     print(f"Loading PyTorch model: {model_id}")

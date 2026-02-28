@@ -1,10 +1,10 @@
-# SomFlow
+# uitag
 
-[![Tests](https://github.com/swaylenhayes/somflow/actions/workflows/test.yml/badge.svg)](https://github.com/swaylenhayes/somflow/actions/workflows/test.yml)
+[![Tests](https://github.com/swaylenhayes/uitag/actions/workflows/test.yml/badge.svg)](https://github.com/swaylenhayes/uitag/actions/workflows/test.yml)
 
 A Set-of-Mark (SoM) detection pipeline for macOS that transforms screenshots into structured, annotated element maps. Built for Apple Silicon using Apple Vision Framework and Florence-2 on MLX.
 
-![SomFlow output — 151 UI elements detected on a 1920x1080 screenshot](https://raw.githubusercontent.com/swaylenhayes/somflow/main/docs/examples/vscode-som.png)
+![uitag output — 151 UI elements detected on a 1920x1080 screenshot](https://raw.githubusercontent.com/swaylenhayes/uitag/main/docs/examples/vscode-som.png)
 
 *151 numbered elements detected in ~0.8s — text labels (Apple Vision), rectangles, icons, and buttons (Florence-2). [Full manifest JSON →](docs/examples/vscode-manifest.json)*
 
@@ -12,7 +12,7 @@ A Set-of-Mark (SoM) detection pipeline for macOS that transforms screenshots int
 
 Vision language models under 10B parameters cannot reliably detect individual UI elements on complex professional screenshots. They collapse to a single full-screen bounding box. This was validated empirically across Florence-2, PTA-1, and other MIT-licensed detection models during a [benchmark of 14+ models](docs/research.md#model-selection).
 
-SomFlow solves this by combining two complementary detection systems and preprocessing the image before any VLM ever sees it:
+uitag solves this by combining two complementary detection systems and preprocessing the image before any VLM ever sees it:
 
 - **Apple Vision Framework** detects text labels and rectangular UI elements natively on the ANE — effectively free
 - **Florence-2** detects non-text elements (icons, buttons, images) via open-vocabulary detection on tiled image quadrants
@@ -55,17 +55,17 @@ End-to-end on a 1920x1080 VS Code screenshot (~151 UI elements detected):
 
 ```bash
 # Install from PyPI
-pip install somflow
+pip install uitag
 
 # Run on a screenshot
-somflow screenshot.png --output-dir out/
+uitag screenshot.png --output-dir out/
 ```
 
 ### Development Setup
 
 ```bash
-git clone https://github.com/swaylenhayes/somflow.git
-cd somflow
+git clone https://github.com/swaylenhayes/uitag.git
+cd uitag
 uv pip install -e ".[dev]"
 uv run pytest  # 55 fast tests
 ```
@@ -101,7 +101,7 @@ Two files are produced:
 ### CLI Options
 
 ```
-somflow <image> [options]
+uitag <image> [options]
 
 Options:
   -o, --output-dir DIR    Output directory (default: current)
@@ -121,22 +121,22 @@ Options:
 
 ## Backend System
 
-SomFlow supports pluggable detection backends via the `DetectionBackend` protocol:
+uitag supports pluggable detection backends via the `DetectionBackend` protocol:
 
 - **MLX** (default) — Florence-2 inference on GPU via Metal. ~160ms per quadrant on M2 Max.
 - **CoreML** — DaViT vision encoder on Apple Neural Engine, decoder on GPU. Useful when GPU is contended by other workloads. Requires a converted model (`python tools/convert_davit_coreml.py`).
 
 ```bash
 # Use default MLX backend
-somflow screenshot.png
+uitag screenshot.png
 
 # Use CoreML backend (ANE offload)
-somflow screenshot.png --backend coreml
+uitag screenshot.png --backend coreml
 ```
 
 ## Research Background
 
-SomFlow emerged from a structured research effort evaluating detection approaches for a UI agent operating on macOS:
+uitag emerged from a structured research effort evaluating detection approaches for a UI agent operating on macOS:
 
 **Model survey (14+ models):** Evaluated detection models across HuggingFace, academic sources, and commercial options. AGPL-licensed models (Screen2AX, OmniParser, YOLO variants) were excluded — the target product ships under MIT. Florence-2, PTA-1, and Florence-2-large were shortlisted.
 
@@ -147,7 +147,7 @@ SomFlow emerged from a structured research effort evaluating detection approache
 
 **Critical discovery:** All sub-10B detection models produce single full-screen bounding boxes on complex screenshots but work correctly on tiled inputs. This is a model capacity limitation, not a tuning problem — 7 configurations of frequency/repetition penalties were tested with no improvement. Tiling is architecturally required.
 
-**Object-aware tiling:** Naive quadrant splits bisect UI elements at cut boundaries. SomFlow searches outward from the midpoint to find cut lines that avoid intersecting any detected bounding box, falling back to the midpoint with extra overlap padding when no clean gap exists.
+**Object-aware tiling:** Naive quadrant splits bisect UI elements at cut boundaries. uitag searches outward from the midpoint to find cut lines that avoid intersecting any detected bounding box, falling back to the midpoint with extra overlap padding when no clean gap exists.
 
 ## Design Decisions
 

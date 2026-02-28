@@ -7,7 +7,7 @@ import re
 import tempfile
 from typing import TYPE_CHECKING
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 if TYPE_CHECKING:
     from PIL import Image

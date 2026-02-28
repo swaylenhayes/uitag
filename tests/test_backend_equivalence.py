@@ -13,7 +13,7 @@ import os
 import pytest
 from PIL import Image
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 COREML_MODEL_PATH = "models/davit_encoder.mlpackage"
 
@@ -47,8 +47,8 @@ def test_coreml_mlx_detection_equivalence():
     if not os.path.exists(COREML_MODEL_PATH):
         pytest.skip("CoreML model not available")
 
-    from somflow.backends.coreml_backend import CoreMLBackend
-    from somflow.backends.mlx_backend import MLXBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.mlx_backend import MLXBackend
 
     # Use a simple synthetic image — both backends should detect similar things
     img = Image.new("RGB", (400, 300), "white")
@@ -102,8 +102,8 @@ def test_coreml_mlx_timing_recorded():
     if not os.path.exists(COREML_MODEL_PATH):
         pytest.skip("CoreML model not available")
 
-    from somflow.backends.coreml_backend import CoreMLBackend
-    from somflow.backends.mlx_backend import MLXBackend
+    from uitag.backends.coreml_backend import CoreMLBackend
+    from uitag.backends.mlx_backend import MLXBackend
 
     img = Image.new("RGB", (200, 200), "gray")
     quad_inputs = [(img, 0, 0)]

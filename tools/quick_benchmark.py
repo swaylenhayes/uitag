@@ -9,8 +9,8 @@ import time
 
 from PIL import Image
 
-from somflow.quadrants import split_object_aware
-from somflow.vision import run_vision_detect
+from uitag.quadrants import split_object_aware
+from uitag.vision import run_vision_detect
 
 
 def run_backend_bench(backend, quad_inputs, label, warmup=1, runs=2):
@@ -66,7 +66,7 @@ def main():
     print(f"  Quadrants: {len(quad_inputs)}")
 
     # MLX benchmark
-    from somflow.backends.mlx_backend import MLXBackend
+    from uitag.backends.mlx_backend import MLXBackend
 
     mlx_backend = MLXBackend()
     mlx_avg = run_backend_bench(mlx_backend, quad_inputs, "MLX (GPU)")
@@ -76,7 +76,7 @@ def main():
 
     coreml_model = "models/davit_encoder.mlpackage"
     if os.path.exists(coreml_model):
-        from somflow.backends.coreml_backend import CoreMLBackend
+        from uitag.backends.coreml_backend import CoreMLBackend
 
         coreml_backend = CoreMLBackend(model_path=coreml_model)
         if coreml_backend.info().available:

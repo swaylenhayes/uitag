@@ -7,9 +7,9 @@ import json
 import subprocess
 from pathlib import Path
 
-from somflow.types import Detection
+from uitag.types import Detection
 
-# Resolve tool paths. The Swift source ships inside the package (somflow/tools/)
+# Resolve tool paths. The Swift source ships inside the package (uitag/tools/)
 # so pip installs work. The compiled binary may exist in the repo root (tools/)
 # for dev installs — check both locations.
 _PKG_TOOLS = Path(__file__).resolve().parent / "tools"

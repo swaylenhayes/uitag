@@ -2,7 +2,7 @@
 
 from PIL import Image, ImageDraw, ImageFont
 
-from somflow.types import Detection
+from uitag.types import Detection
 
 SOM_COLORS = [
     (255, 0, 0),

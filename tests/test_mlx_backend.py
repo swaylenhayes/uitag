@@ -4,8 +4,8 @@ from unittest.mock import patch, MagicMock
 
 from PIL import Image
 
-from somflow.backends.base import DetectionBackend
-from somflow.backends.mlx_backend import MLXBackend
+from uitag.backends.base import DetectionBackend
+from uitag.backends.mlx_backend import MLXBackend
 
 
 def test_mlx_backend_is_detection_backend():
@@ -31,8 +31,8 @@ def test_mlx_backend_detect_quadrants_delegates():
     img = Image.new("RGB", (100, 100), "white")
 
     with (
-        patch("somflow.backends.mlx_backend.generate") as mock_gen,
-        patch("somflow.backends.mlx_backend._load_model") as mock_load,
+        patch("uitag.backends.mlx_backend.generate") as mock_gen,
+        patch("uitag.backends.mlx_backend._load_model") as mock_load,
     ):
         mock_gen.return_value = mock_output
         mock_load.return_value = (MagicMock(), MagicMock())

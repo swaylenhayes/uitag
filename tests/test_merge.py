@@ -1,7 +1,7 @@
 """Tests for detection merging and deduplication."""
 
-from somflow.types import Detection
-from somflow.merge import merge_detections, compute_iou
+from uitag.types import Detection
+from uitag.merge import merge_detections, compute_iou
 
 
 def test_compute_iou_identical():
