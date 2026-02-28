@@ -171,7 +171,7 @@ pytest
 pytest --run-slow
 ```
 
-53 fast tests covering: location token parsing, quadrant splitting, IoU computation, merge deduplication, SoM rendering, manifest generation, Apple Vision integration, backend protocol, backend selection, and encoder bridge conversion.
+55 fast tests covering: location token parsing, quadrant splitting, IoU computation, merge deduplication, SoM rendering, manifest generation, schema validation, Apple Vision integration, backend protocol, backend selection, and encoder bridge conversion.
 
 ## License
 

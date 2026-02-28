@@ -28,5 +28,8 @@ docs/interagent-somflow/
 # Worktrees
 .worktrees/
 
+# Pre-compiled Swift binary (compile locally with: swiftc -O tools/vision-detect.swift -o tools/vision-detect)
+tools/vision-detect
+
 # CoreML models (generated, large)
 models/
