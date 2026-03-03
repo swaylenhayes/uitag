@@ -1,7 +1,7 @@
 # uitag — Flywheel Launch Roadmap
 
-_Last updated: 2026-02-27 (evening)_
-_Status: Sprints 1-3 complete. Flywheel launch roadmap done._
+_Last updated: 2026-03-02_
+_Status: Sprints 1-3 complete. Post-launch features (batch, benchmark) shipped in v0.3.1._
 
 ---
 
@@ -28,7 +28,7 @@ These are real and defensible — not aspirational:
 | Clean README | Good | Problem statement, architecture, quick start, research background |
 | CLI entry point | Working | `uitag screenshot.png` works after install |
 | MIT license | Done | Clean IP, no AGPL contamination |
-| Test suite | 55 tests | Fast/slow split, all passing |
+| Test suite | 87 tests | Fast/slow split, all passing |
 | pyproject.toml | Complete | Metadata, deps, entry points, optional groups |
 | Backend abstraction | Complete | MLX default + CoreML option, `--backend` flag |
 | JSON manifest contract | Stable | Structured output that downstream agents consume |
@@ -53,8 +53,8 @@ These are real and defensible — not aspirational:
 - ~~No issue templates~~ — Bug report + feature request (Sprint 2)
 - ~~No GitHub release~~ — v0.2.0 published (Sprint 2)
 
-### Tier 3: "Can I build on this?" — MOSTLY RESOLVED
-- **No Python API docs** — Partially addressed by examples, no formal API docs yet
+### Tier 3: "Can I build on this?" — ALL RESOLVED
+- ~~No Python API docs~~ — `docs/api.md` with functions, types, manifest schema (v0.3.1)
 - ~~No integration example~~ — `use_as_library.py` + `custom_backend.py` (Sprint 3)
 - ~~Manifest schema not formal~~ — `uitag/schema.json` with tests (Sprint 3)
 
@@ -97,11 +97,23 @@ _Goal: Someone can contribute without asking you how._
 
 ---
 
+## Post-Launch (v0.3.x)
+
+Shipped after the initial flywheel sprints:
+
+- [x] **Batch CLI** (`uitag batch <dir>`) — Process folders of screenshots in one command (v0.3.1)
+- [x] **Benchmark CLI** (`uitag benchmark <image>`) — Per-stage timing with stats across N runs (v0.3.1)
+- [x] **Per-stage timing instrumentation** — All 6 pipeline stages timed in manifest output (v0.3.1)
+- [x] **API reference docs** — `docs/api.md` with functions, types, manifest schema
+- [x] **Performance docs** — `docs/performance.md` with stage breakdown, backend comparison
+- [ ] **Pipeline architecture visual** — Replace ASCII diagram in README with a proper visual (SVG or image). The ASCII version works but doesn't convey the pipeline flow as clearly as a diagram would for first-time visitors.
+
+---
+
 ## What We're NOT Doing (Parked)
 
 | Item | Why parked | Resume trigger |
 |------|-----------|----------------|
-| F1.3 Phases 4-5 (benchmark CLI, perf regression tests) | Performance target already exceeded | If regressions appear |
 | CoreML as AUTO default | MLX is faster on idle GPU | Orchestration layer decides context |
 | GPU load detection in selector | Orchestration-layer concern, not pipeline | Inter-agent architecture review |
 | Florence-2 task token exploration (F1.4) | Shipping > features | After flywheel is turning |
