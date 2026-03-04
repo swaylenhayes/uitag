@@ -153,13 +153,67 @@ def get_machine_info() -> dict[str, str]:
     }
 
 
+def _benchmark_image(
+    image_path: Path,
+    *,
+    runs: int,
+    warmup: int,
+    ocr_mode: str,
+    backend,
+    quiet: bool = False,
+) -> tuple[dict[str, dict[str, float]], int, str, str]:
+    """Run benchmark for a single image.
+
+    Returns:
+        Tuple of (stats, detection_count, image_name, image_size).
+    """
+    from PIL import Image
+
+    from uitag.run import run_pipeline
+
+    img = Image.open(image_path)
+    image_size = f"{img.size[0]}x{img.size[1]}"
+
+    if not quiet:
+        print(f"Benchmarking: {image_path.name} ({image_size})")
+
+    # Warmup
+    for i in range(warmup):
+        if not quiet:
+            print(f"  warmup {i + 1}/{warmup}...", end="\r")
+        run_pipeline(str(image_path), recognition_level=ocr_mode, backend=backend)
+    if not quiet and warmup:
+        print(f"  warmup done ({warmup} run{'s' if warmup != 1 else ''})")
+
+    # Measured runs
+    timings = []
+    detection_count = 0
+    for i in range(runs):
+        if not quiet:
+            print(f"  run {i + 1}/{runs}...", end="\r")
+        result, _, _ = run_pipeline(
+            str(image_path), recognition_level=ocr_mode, backend=backend
+        )
+        timings.append(result.timing_ms)
+        detection_count = len(result.detections)
+
+    if not quiet:
+        print(f"  {runs} runs complete\n")
+
+    return compute_stats(timings), detection_count, image_path.name, image_size
+
+
 def benchmark_main(argv: list[str] | None = None) -> None:
     """Entry point for ``uitag benchmark``."""
     parser = argparse.ArgumentParser(
         prog="uitag benchmark",
         description="Benchmark the uitag detection pipeline",
     )
-    parser.add_argument("image", nargs="?", help="Path to screenshot (required)")
+    parser.add_argument(
+        "image",
+        nargs="?",
+        help="Path to screenshot (uses bundled dark + light images if omitted)",
+    )
     parser.add_argument(
         "--runs", type=int, default=3, help="Measured runs (default: 3)"
     )
@@ -179,96 +233,80 @@ def benchmark_main(argv: list[str] | None = None) -> None:
 
     args = parser.parse_args(argv)
 
+    # Resolve image paths
     if args.image is None:
-        print(
-            "Usage: uitag benchmark <image.png> [--runs N] [--fast] [--json]",
-            file=sys.stderr,
-        )
-        print(
-            "\nNo bundled reference image yet. Provide your own screenshot.",
-            file=sys.stderr,
-        )
-        sys.exit(1)
+        from uitag.assets.bundled import get_benchmark_image_paths
 
-    image_path = Path(args.image)
-    if not image_path.exists():
-        print(f"Error: Image not found: {image_path}", file=sys.stderr)
-        sys.exit(1)
-
-    from PIL import Image
+        image_paths = get_benchmark_image_paths()
+        if not args.json_only:
+            print("Using bundled reference images (dark + light)\n")
+    else:
+        image_path = Path(args.image)
+        if not image_path.exists():
+            print(f"Error: Image not found: {image_path}", file=sys.stderr)
+            sys.exit(1)
+        image_paths = [image_path]
 
     from uitag.backends.selector import BackendPreference, select_backend
 
-    img = Image.open(image_path)
-    image_size = f"{img.size[0]}x{img.size[1]}"
     ocr_mode = "fast" if args.fast else "accurate"
-
     preference = BackendPreference(args.backend)
     backend = select_backend(preference=preference)
 
     if not args.json_only:
-        print(f"Benchmarking: {image_path.name} ({image_size})")
         print(f"Backend: {backend.info().name} | OCR: {ocr_mode}")
         print(f"Runs: {args.runs} + {args.warmup} warmup\n")
 
-    from uitag.run import run_pipeline
-
-    # Warmup runs
-    for i in range(args.warmup):
-        if not args.json_only:
-            print(f"  warmup {i + 1}/{args.warmup}...", end="\r")
-        run_pipeline(
-            str(image_path),
-            recognition_level=ocr_mode,
-            backend=backend,
-        )
-    if not args.json_only and args.warmup:
-        print(f"  warmup done ({args.warmup} run{'s' if args.warmup != 1 else ''})")
-
-    # Measured runs
-    timings = []
-    detection_count = 0
-    for i in range(args.runs):
-        if not args.json_only:
-            print(f"  run {i + 1}/{args.runs}...", end="\r")
-        result, _, _ = run_pipeline(
-            str(image_path),
-            recognition_level=ocr_mode,
-            backend=backend,
-        )
-        timings.append(result.timing_ms)
-        detection_count = len(result.detections)
-
-    if not args.json_only:
-        print(f"  {args.runs} runs complete\n")
-
-    # Compute and display
-    stats = compute_stats(timings)
     machine = get_machine_info()
 
+    # Benchmark each image
     if args.json_only:
-        print(
-            build_json_report(
-                stats=stats,
-                machine_info=machine,
-                image_name=image_path.name,
-                image_size=image_size,
+        reports = []
+        for img_path in image_paths:
+            stats, det_count, img_name, img_size = _benchmark_image(
+                img_path,
                 runs=args.runs,
                 warmup=args.warmup,
-                detection_count=detection_count,
                 ocr_mode=ocr_mode,
+                backend=backend,
+                quiet=True,
             )
-        )
+            report = json.loads(
+                build_json_report(
+                    stats=stats,
+                    machine_info=machine,
+                    image_name=img_name,
+                    image_size=img_size,
+                    runs=args.runs,
+                    warmup=args.warmup,
+                    detection_count=det_count,
+                    ocr_mode=ocr_mode,
+                )
+            )
+            reports.append(report)
+        output = reports[0] if len(reports) == 1 else reports
+        print(json.dumps(output, indent=2))
     else:
-        table = format_table(
-            stats=stats,
-            machine_info=machine,
-            image_name=image_path.name,
-            image_size=image_size,
-            runs=args.runs,
-            warmup=args.warmup,
-            detection_count=detection_count,
-            ocr_mode=ocr_mode,
-        )
-        print(table)
+        tables = []
+        for img_path in image_paths:
+            stats, det_count, img_name, img_size = _benchmark_image(
+                img_path,
+                runs=args.runs,
+                warmup=args.warmup,
+                ocr_mode=ocr_mode,
+                backend=backend,
+            )
+            tables.append(
+                format_table(
+                    stats=stats,
+                    machine_info=machine,
+                    image_name=img_name,
+                    image_size=img_size,
+                    runs=args.runs,
+                    warmup=args.warmup,
+                    detection_count=det_count,
+                    ocr_mode=ocr_mode,
+                )
+            )
+        print("\n\n".join(tables))
         print("\nRun with --json for machine-readable output.")

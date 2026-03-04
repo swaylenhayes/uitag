@@ -48,7 +48,7 @@ where = ["."]
 include = ["uitag*"]
 
 [tool.setuptools.package-data]
-uitag = ["tools/*.swift", "*.json"]
+uitag = ["tools/*.swift", "*.json", "assets/*.png"]
 
 [tool.ruff]
 line-length = 88

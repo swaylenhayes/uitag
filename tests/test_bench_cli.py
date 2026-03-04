@@ -118,13 +118,19 @@ def test_smart_dispatch_routes_benchmark(monkeypatch):
     assert called_with == [["--runs", "1", "test.png"]]
 
 
-def test_benchmark_main_no_image_exits():
-    """benchmark_main with no image prints usage and exits."""
-    from uitag.bench_cli import benchmark_main
+def test_bundled_benchmark_images_exist():
+    """Bundled benchmark images are accessible and are valid PNGs."""
+    from uitag.assets.bundled import BENCHMARK_IMAGES, get_benchmark_image_paths
 
-    with pytest.raises(SystemExit) as exc:
-        benchmark_main([])
-    assert exc.value.code != 0
+    paths = get_benchmark_image_paths()
+    assert len(paths) == len(BENCHMARK_IMAGES)
+    for path, expected_name in zip(paths, BENCHMARK_IMAGES):
+        assert path.name == expected_name
+        assert path.exists()
+        # Verify PNG magic bytes
+        with open(path, "rb") as f:
+            header = f.read(4)
+        assert header == b"\x89PNG"
 
 
 def test_benchmark_main_nonexistent_image_exits():
