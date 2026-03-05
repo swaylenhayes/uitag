@@ -6,7 +6,7 @@ A Set-of-Mark (SoM) detection pipeline for macOS that transforms screenshots int
 
 ![uitag demo — 229 UI elements detected in 2.4s on a VS Code screenshot](docs/assets/demo-composite-upper-right-10s.gif)
 
-*229 elements detected in 2.4s — text labels (Apple Vision), rectangles, icons, and buttons (Florence-2). [Full manifest JSON →](docs/examples/vscode-manifest.json)*
+*229 elements detected in 2.4s — text labels (Apple Vision), rectangles, icons, and buttons (Florence-2). [Full manifest JSON →](docs/examples/vscode-229-manifest.json)*
 
 ## Quick Start
 
@@ -49,6 +49,10 @@ Then we noticed something: the same models detect reliably on cropped regions.
 That's the core insight. uitag doesn't force a small model to see a complex desktop. It tiles the screenshot into quadrants first — with cut lines placed to avoid bisecting UI elements — and runs detection on each tile separately. Apple Vision handles text and rectangles natively on the ANE (fast, free, no model download). Florence-2 catches everything else — icons, buttons, images — at 159MB on Metal.
 
 ⚡ **Every model we tested returned 1 bounding box. uitag returns 151 — in 1.7 seconds, fully open-source under MIT.** [Full research methodology →](docs/research.md)
+
+![uitag output — 151 tagged UI elements on a VS Code screenshot](docs/examples/hero-after.png)
+
+*151 elements detected in ~1.7s. [Full manifest JSON →](docs/examples/vscode-manifest.json)*
 
 ## Pipeline Architecture
 
