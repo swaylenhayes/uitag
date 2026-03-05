@@ -52,7 +52,7 @@ That's the core insight. uitag doesn't force a small model to see a complex desk
 
 ![uitag output — 151 tagged UI elements on a VS Code screenshot](docs/examples/hero-after.png)
 
-*151 elements detected in ~1.7s. [Full manifest JSON →](docs/examples/vscode-manifest.json)*
+*151 elements detected in ~1.7s — text labels (Apple Vision), rectangles, icons, and buttons (Florence-2). [Full manifest JSON →](docs/examples/vscode-manifest.json)*
 
 ## Pipeline Architecture
 
