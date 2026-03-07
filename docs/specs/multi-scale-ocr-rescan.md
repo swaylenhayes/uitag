@@ -439,10 +439,9 @@ recompiled with `swiftc -O`.
 - **Tesseract with custom dictionaries** — this is a domain-specific
   vocabulary approach. Training Tesseract on code patterns, regex syntax,
   or app-specific text requires maintaining curated training data. This
-  overlaps with the Level 2 (domain dictionaries) and Level 3 (regex
-  validation) topics in `docs/ocr-correction-strategy.md`. It's not an
+  overlaps with domain dictionaries and regex validation topics. It's not an
   OCR engine swap — it's a knowledge-maintenance commitment.
-- **LLM post-correction** — agent-layer work.
+- **LLM post-correction** — out of scope for this spec.
 - **Curated pattern libraries** — maintenance and boundary question.
 
 ### Why Tesseract is in the debate lane, not here
@@ -454,11 +453,11 @@ UI text and code patterns. That custom training data is exactly the
 It requires:
 - Collecting training data (screenshots with known-correct labels)
 - Maintaining the model as new UI patterns emerge
-- Deciding who owns that maintenance (open source, premium, agent layer)
+- Deciding who owns that maintenance (open source, premium, or external tooling)
 
 That's the same boundary question as domain dictionaries. Mixing it into
-the OCR rescan lane would create coherency issues with the inter-agent
-discussion.
+the OCR rescan lane would create coherency issues with the broader
+correction strategy.
 
 ---
 
