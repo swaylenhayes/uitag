@@ -1,7 +1,7 @@
 # uitag — Roadmap
 
 _Last updated: 2026-03-08_
-_Status: Sprints 1-3 complete. v0.3.1 shipped (batch, benchmark). v0.4.0 ready (rescan, patch, render)._
+_Status: Sprints 1-3 complete. v0.3.1 shipped (batch, benchmark). v0.4.1 current (rescan, patch, render, CLI UX polish)._
 
 ---
 
@@ -114,7 +114,7 @@ _Status: Sprints 1-3 complete. v0.3.1 shipped (batch, benchmark). v0.4.0 ready (
 - [ ] **Broader screenshot testing** — IDE, settings UIs, web apps in both light/dark mode
 - [ ] **Large callout count** — Test stacking/overlap with 5+ callout boxes
 - [ ] **Long values** — Test truncation or wrapping for very long field values
-- [ ] **Dark mode detection** — CLI hint when dark mode screenshots may benefit from light mode recapture
+- [x] **Dark mode detection** — CLI hint when dark mode screenshots may benefit from light mode recapture (v0.4.1)
 
 ---
 

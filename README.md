@@ -43,12 +43,14 @@ uitag benchmark <image>         Measure per-stage pipeline timing
 
 ### OCR Rescan
 
-Low-confidence text detections are flagged automatically. Use `--rescan` to re-OCR them with a multi-crop ensemble:
+Low-confidence text detections are flagged automatically with an interactive rescan prompt. Or use `--rescan` directly:
 
 ```bash
 uitag screenshot.png --rescan          # rescan all low-confidence text
 uitag screenshot.png --rescan 7,27     # rescan specific elements by SOM ID
 ```
+
+Rescan outputs use a `-rescan` suffix (`{stem}-uitag-rescan.png`) so standard outputs are preserved.
 
 Rescan crops each element at 5 padding values and selects the best reading, with language correction disabled for code/regex accuracy. See [research details](docs/research/ocr-rescan-experiments.md).
 

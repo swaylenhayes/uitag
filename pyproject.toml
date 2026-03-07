@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "uitag"
-version = "0.4.0"
+version = "0.4.1"
 description = "SoM (Set-of-Mark) detection pipeline for macOS — Apple Vision + Florence-2 on MLX"
 readme = "README.md"
 license = "MIT"
