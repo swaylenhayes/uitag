@@ -147,7 +147,12 @@ def rescan_low_confidence(
         new_label, new_conf = _rescan_single(image, det, scale=scale)
 
         updated = copy.copy(det)
-        if new_conf > det.confidence:
+        # Only replace if confidence improved AND special chars weren't lost.
+        # High-confidence crops can produce sanitized text that drops backslashes,
+        # swaps characters (l→I, w→W), or introduces Cyrillic substitutions.
+        orig_sc = _special_char_count(det.label)
+        new_sc = _special_char_count(new_label)
+        if new_conf > det.confidence and new_sc >= orig_sc:
             updated.label = new_label
             updated.confidence = new_conf
             improved_count += 1

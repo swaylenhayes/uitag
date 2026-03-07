@@ -123,8 +123,9 @@ def main():
 
     # Save outputs
     stem = Path(image_path).stem
-    annotated_path = out_dir / f"{stem}-uitag.png"
-    manifest_path = out_dir / f"{stem}-uitag-manifest.json"
+    suffix = "-rescan" if args.rescan else ""
+    annotated_path = out_dir / f"{stem}-uitag{suffix}.png"
+    manifest_path = out_dir / f"{stem}-uitag{suffix}-manifest.json"
 
     annotated.save(annotated_path)
     with open(manifest_path, "w") as f:
@@ -145,24 +146,68 @@ def main():
 
     low_conf = find_low_confidence(result.detections, threshold=0.8)
     if low_conf and not args.rescan:
-        print(f"\n! {len(low_conf)} low-confidence detection(s):")
+        # Bold orange header
+        header = f"{len(low_conf)} low-confidence detection(s):"
+        if sys.stdout.isatty():
+            print(f"\n\033[1;33m{header}\033[0m")  # bold orange/yellow
+        else:
+            print(f"\n{header}")
+
         for d in low_conf[:5]:
-            print(f'  [{d.som_id}]  "{d.label}"  conf: {d.confidence:.2f}')
+            print(f'  [{d.som_id}] CONF {d.confidence:.2f}  "{d.label}"')
         if len(low_conf) > 5:
             print(f"  ... and {len(low_conf) - 5} more")
-        print("\nTip: run with --rescan to re-check at higher resolution")
 
-    # Dark mode hint (Option A: only when dark mode + low-confidence)
-    if low_conf:
+        # Dark mode hint (Option A: only when dark mode + low-confidence)
         from PIL import Image as _Image
 
         _img = _Image.open(image_path).convert("L")
         avg_brightness = sum(_img.getdata()) / (_img.width * _img.height)
         if avg_brightness < 100:
             print(
-                "Note: dark background detected — light mode screenshots"
+                "\nNote: dark background detected — light mode screenshots"
                 " typically produce more accurate OCR for code and special characters."
             )
+
+        # Interactive rescan prompt
+        if sys.stdout.isatty():
+            try:
+                answer = (
+                    input("\nRescan low-confidence detections? [y/N] ").strip().lower()
+                )
+            except (EOFError, KeyboardInterrupt):
+                answer = ""
+            if answer in ("y", "yes"):
+                from uitag.run import run_pipeline as _rerun
+
+                t0_rescan = time.perf_counter()
+                result, annotated, manifest = _rerun(
+                    image_path,
+                    florence_task=args.task,
+                    overlap_px=args.overlap,
+                    iou_threshold=args.iou,
+                    recognition_level="fast" if args.fast else "accurate",
+                    backend=backend,
+                    rescan=True,
+                    rescan_threshold=0.8,
+                )
+                rescan_s = time.perf_counter() - t0_rescan
+
+                # Save rescan outputs with -rescan suffix
+                rescan_annotated_path = out_dir / f"{stem}-uitag-rescan.png"
+                rescan_manifest_path = out_dir / f"{stem}-uitag-rescan-manifest.json"
+                annotated.save(rescan_annotated_path)
+                with open(rescan_manifest_path, "w") as f:
+                    f.write(manifest)
+
+                rescan_line = f"Rescan complete in {rescan_s:.1f}s"
+                if sys.stdout.isatty():
+                    print(f"\n\033[1;32m{rescan_line}\033[0m")
+                else:
+                    print(f"\n{rescan_line}")
+                print(f"Output: 1 image, 1 manifest in {out_dir.resolve()}/")
+        else:
+            print("\nTip: run with --rescan to re-check at higher resolution")
 
     if args.verbose:
         print(f"\nTiming: {json.dumps(result.timing_ms)}")
