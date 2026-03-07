@@ -32,6 +32,14 @@ def _load_model():
     """Lazy-load model as singleton (load once, reuse across calls)."""
     global _model, _processor
     if _model is None:
+        # Suppress huggingface_hub progress bars (model is cached locally)
+        os.environ["HF_HUB_DISABLE_PROGRESS_BARS"] = "1"
+        try:
+            from huggingface_hub.utils import disable_progress_bars
+
+            disable_progress_bars()
+        except ImportError:
+            pass
         from mlx_vlm import load
 
         _model, _processor = load(MODEL_ID)

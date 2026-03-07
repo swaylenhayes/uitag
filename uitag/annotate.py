@@ -16,6 +16,12 @@ SOM_COLORS = [
 ]
 
 
+def _text_color(bg: tuple[int, int, int]) -> str:
+    """Return 'black' or 'white' for best contrast against the background color."""
+    luminance = 0.299 * bg[0] + 0.587 * bg[1] + 0.114 * bg[2]
+    return "black" if luminance > 130 else "white"
+
+
 def render_som(
     image: Image.Image,
     detections: list[Detection],
@@ -23,7 +29,8 @@ def render_som(
 ) -> Image.Image:
     """Render Set-of-Mark numbered annotations on an image.
 
-    Each detection gets a colored bounding box and a numbered circle marker.
+    Each detection gets a colored bounding box and a numbered circle marker
+    positioned outside the top-left corner of the bounding box.
     """
     annotated = image.copy().convert("RGB")
     draw = ImageDraw.Draw(annotated)
@@ -35,6 +42,8 @@ def render_som(
     except (OSError, IOError):
         font = ImageFont.load_default()
 
+    r = marker_size // 2
+
     for det in detections:
         if det.som_id is None:
             continue
@@ -45,14 +54,16 @@ def render_som(
         x2, y2 = det.x + det.width, det.y + det.height
         draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
 
-        cx, cy = x1, y1
-        r = marker_size // 2
+        # Position marker fully outside the bounding box (above-left of corner)
+        cx = max(r, x1 - r - 1)
+        cy = max(r, y1 - r - 1)
         draw.ellipse([cx - r, cy - r, cx + r, cy + r], fill=color)
 
         label = str(det.som_id)
         bbox = draw.textbbox((0, 0), label, font=font)
         tw = bbox[2] - bbox[0]
         th = bbox[3] - bbox[1]
-        draw.text((cx - tw // 2, cy - th // 2 - 1), label, fill="white", font=font)
+        text_color = _text_color(color)
+        draw.text((cx - tw // 2, cy - th // 2 - 1), label, fill=text_color, font=font)
 
     return annotated
