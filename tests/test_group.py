@@ -240,3 +240,49 @@ def test_rect_outside_text_block_preserved():
     assert groups_formed == 1
     assert len(result) == 2
     assert any(d.source == "vision_rect" for d in result)
+
+
+def test_near_miss_rect_absorbed_with_padding():
+    """vision_rect extending a few pixels beyond text block is absorbed.
+
+    Real-world case: Apple Vision's rect detector extends ~5px beyond its
+    text detector boundary. Without padding the rect survives at ~80%
+    containment (below the 85% threshold). With 5px block padding it's
+    absorbed.
+    """
+    from uitag.group import group_text_blocks
+
+    # Based on basic-settings-2: Sampler section, rect SoM 20 / block SoM 21
+    # Block lines span y:692-803, but the rect starts at y:687 (5px above)
+    dets = [
+        _det("Different samplers can converge at", x=36, y=692, w=471, h=18),
+        _det("different step counts and may result", x=36, y=716, w=471, h=18),
+        _det("in different qualities.", x=36, y=740, w=200, h=18),
+        # Rect starts 5px above the first text line
+        _det("rectangle", x=36, y=687, w=87, h=24, source="vision_rect"),
+    ]
+    result, groups_formed = group_text_blocks(dets)
+
+    assert groups_formed == 1
+    # Rect should be absorbed thanks to block_padding
+    text_blocks = [d for d in result if d.source == "vision_text_block"]
+    rects = [d for d in result if d.source == "vision_rect"]
+    assert len(text_blocks) == 1
+    assert len(rects) == 0
+
+
+def test_near_miss_rect_without_padding_survives():
+    """Verify near-miss rect survives when padding is explicitly zero."""
+    from uitag.group import group_text_blocks
+
+    dets = [
+        _det("Different samplers can converge at", x=36, y=692, w=471, h=18),
+        _det("different step counts and may result", x=36, y=716, w=471, h=18),
+        _det("in different qualities.", x=36, y=740, w=200, h=18),
+        _det("rectangle", x=36, y=687, w=87, h=24, source="vision_rect"),
+    ]
+    result, groups_formed = group_text_blocks(dets, block_padding=0)
+
+    assert groups_formed == 1
+    rects = [d for d in result if d.source == "vision_rect"]
+    assert len(rects) == 1  # Rect survives without padding

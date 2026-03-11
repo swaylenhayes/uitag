@@ -10,6 +10,7 @@ def group_text_blocks(
     max_y_gap_factor: float = 1.0,
     x_align_tolerance: int = 20,
     containment_threshold: float = 0.85,
+    block_padding: int = 5,
 ) -> tuple[list[Detection], int]:
     """Group adjacent vision_text lines into text blocks.
 
@@ -19,7 +20,9 @@ def group_text_blocks(
 
     Groups of 2+ lines become a single detection with source
     ``"vision_text_block"`` and space-joined labels. Vision rectangles
-    mostly contained within text blocks are absorbed.
+    mostly contained within text blocks are absorbed (block bbox is
+    expanded by ``block_padding`` pixels to compensate for boundary
+    misalignment between Vision's rect and text detectors).
 
     Returns:
         (updated_detections, groups_formed)
@@ -86,7 +89,9 @@ def group_text_blocks(
 
     for det in other_dets:
         if det.source == "vision_rect" and text_blocks:
-            if _is_contained_in_any(det, text_blocks, containment_threshold):
+            if _is_contained_in_any(
+                det, text_blocks, containment_threshold, block_padding
+            ):
                 continue
         filtered_other.append(det)
 
@@ -103,13 +108,24 @@ def _is_contained_in_any(
     rect: Detection,
     blocks: list[Detection],
     threshold: float,
+    padding: int = 0,
 ) -> bool:
-    """Check if rect is mostly contained within any text block."""
+    """Check if rect is mostly contained within any text block.
+
+    The block bbox is expanded by ``padding`` pixels on all sides to
+    compensate for Apple Vision's boundary misalignment between its
+    rectangle and text detectors.
+    """
     for block in blocks:
-        ix1 = max(rect.x, block.x)
-        iy1 = max(rect.y, block.y)
-        ix2 = min(rect.x + rect.width, block.x + block.width)
-        iy2 = min(rect.y + rect.height, block.y + block.height)
+        bx1 = block.x - padding
+        by1 = block.y - padding
+        bx2 = block.x + block.width + padding
+        by2 = block.y + block.height + padding
+
+        ix1 = max(rect.x, bx1)
+        iy1 = max(rect.y, by1)
+        ix2 = min(rect.x + rect.width, bx2)
+        iy2 = min(rect.y + rect.height, by2)
 
         if ix2 <= ix1 or iy2 <= iy1:
             continue

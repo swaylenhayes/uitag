@@ -31,7 +31,6 @@ _LOC_PATTERN = re.compile(
 _LEAKED_LOC_PREFIX = re.compile(r"^(loc_\d+>\s*)+")
 
 
-
 def _load_model():
     """Lazy-load model as singleton (load once, reuse across calls)."""
     global _model, _processor
