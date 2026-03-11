@@ -79,13 +79,18 @@ def parse_location_tokens(
         x2 = int(int(match.group(4)) * image_width / 999)
         y2 = int(int(match.group(5)) * image_height / 999)
 
+        w = x2 - x1
+        h = y2 - y1
+        if w <= 0 or h <= 0:
+            continue
+
         results.append(
             {
                 "label": label,
                 "x": x1,
                 "y": y1,
-                "width": x2 - x1,
-                "height": y2 - y1,
+                "width": w,
+                "height": h,
             }
         )
 

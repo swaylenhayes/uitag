@@ -52,6 +52,8 @@ def render_som(
 
         x1, y1 = det.x, det.y
         x2, y2 = det.x + det.width, det.y + det.height
+        if x1 > x2 or y1 > y2:
+            continue
         draw.rectangle([x1, y1, x2, y2], outline=color, width=2)
 
         # Position marker fully outside the bounding box (above-left of corner)
