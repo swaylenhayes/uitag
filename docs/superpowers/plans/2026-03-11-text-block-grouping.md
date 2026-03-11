@@ -615,8 +615,8 @@ git commit -m "feat: integrate text block grouping as Stage 4d in pipeline"
 - [ ] **Step 1: Re-run on tools-1.png, inspect results**
 
 ```bash
-rm -rf /Users/swaylen/Desktop/image-files/output
-uitag batch /Users/swaylen/Desktop/image-files -o /Users/swaylen/Desktop/image-files/output
+rm -rf <test-images-dir>/output
+uitag batch <test-images-dir> -o <test-images-dir>/output
 ```
 
 Expected: All 7 images process successfully, element counts drop (fewer fragments).
@@ -637,8 +637,8 @@ After grouping: both should be significantly lower.
 - [ ] **Step 4: Open annotated images to visual-check**
 
 ```bash
-open /Users/swaylen/Desktop/image-files/output/tools-1-uitag.png
-open /Users/swaylen/Desktop/image-files/output/tools-1-r1-uitag.png
+open <test-images-dir>/output/tools-1-uitag.png
+open <test-images-dir>/output/tools-1-r1-uitag.png
 ```
 
 Verify: text blocks have a single bounding box, not 4+ overlapping boxes.
