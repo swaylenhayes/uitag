@@ -27,6 +27,10 @@ _LOC_PATTERN = re.compile(
     r"<loc_(\d+)><loc_(\d+)><loc_(\d+)><loc_(\d+)>"
 )
 
+# Leaked location token fragments in label text (e.g. "loc_673>human face")
+_LEAKED_LOC_PREFIX = re.compile(r"^(loc_\d+>\s*)+")
+
+
 
 def _load_model():
     """Lazy-load model as singleton (load once, reuse across calls)."""
@@ -74,6 +78,10 @@ def parse_location_tokens(
     results: list[dict] = []
     for match in _LOC_PATTERN.finditer(text):
         label = match.group(1).strip()
+        # Strip leaked location token prefixes (e.g. "loc_673>human face" -> "human face")
+        label = _LEAKED_LOC_PREFIX.sub("", label)
+        if not label:
+            continue
         x1 = int(int(match.group(2)) * image_width / 999)
         y1 = int(int(match.group(3)) * image_height / 999)
         x2 = int(int(match.group(4)) * image_width / 999)
