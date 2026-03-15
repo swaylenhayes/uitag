@@ -1,5 +1,9 @@
 """Tests for Florence-2 detection filtering."""
 
+import json
+from types import SimpleNamespace
+from unittest.mock import MagicMock, patch
+
 from uitag.filter import filter_florence2
 from uitag.types import Detection
 
@@ -92,10 +96,10 @@ def test_non_florence2_detections_pass_through():
 def test_stats_dict_accurate():
     """Stats dict correctly counts each filter layer."""
     dets = [
-        _make_det("poster", x=0, y=0, w=500, h=500),       # Large + COCO → coverage
+        _make_det("poster", x=0, y=0, w=500, h=500),  # Large + COCO → coverage
         _make_det("human face", x=100, y=200, w=50, h=40),  # Small + COCO → blocklist
-        _make_det("toggle", x=300, y=400, w=30, h=20),      # Small + unknown → kept
-        _make_det("Submit", source="vision_text"),            # Non-florence2 → passthrough
+        _make_det("toggle", x=300, y=400, w=30, h=20),  # Small + unknown → kept
+        _make_det("Submit", source="vision_text"),  # Non-florence2 → passthrough
     ]
     filtered, stats = filter_florence2(dets, image_width=1920, image_height=1080)
     assert stats["florence2_total"] == 3
@@ -120,3 +124,66 @@ def test_zero_florence2_is_noop():
     assert stats["florence2_total"] == 0
     assert stats["florence2_kept"] == 0
     assert stats["florence2_labels_kept"] == []
+
+
+# --- Integration: run_pipeline with no_florence ---
+
+
+def test_no_florence_skips_florence_stages(tmp_path):
+    """run_pipeline with no_florence=True skips tiling and florence."""
+    from PIL import Image
+
+    # Create a minimal test image
+    img = Image.new("RGB", (200, 100), "white")
+    img_path = tmp_path / "test.png"
+    img.save(img_path)
+
+    # Mock Apple Vision to return a simple detection
+    mock_dets = [_make_det("File", source="vision_text", som_id=None)]
+    with patch("uitag.run.run_vision_detect") as mock_vision:
+        mock_vision.return_value = (mock_dets, {})
+        from uitag.run import run_pipeline
+
+        result, annotated, manifest = run_pipeline(str(img_path), no_florence=True)
+
+    # Florence-related keys absent, downstream stages still ran
+    assert result.timing_ms.get("florence_skipped") is True
+    assert "florence_total_ms" not in result.timing_ms
+    assert "tiling_ms" not in result.timing_ms
+    assert "florence2_filter_ms" not in result.timing_ms
+    assert "correct_ms" in result.timing_ms  # downstream stages ran
+    assert "group_ms" in result.timing_ms
+
+    # Manifest should contain the vision detection
+    manifest_data = json.loads(manifest)
+    assert len(manifest_data["elements"]) == 1
+
+
+def test_filter_stats_in_timing(tmp_path):
+    """run_pipeline includes filter stats in timing_ms when florence runs."""
+    from PIL import Image
+
+    img = Image.new("RGB", (200, 100), "white")
+    img_path = tmp_path / "test.png"
+    img.save(img_path)
+
+    mock_vision_dets = [_make_det("File", source="vision_text", som_id=None)]
+    mock_florence_dets = [_make_det("mobile phone", x=0, y=0, w=180, h=90)]
+
+    mock_backend = MagicMock(spec=["detect_quadrants", "info"])
+    mock_backend.detect_quadrants.return_value = mock_florence_dets
+    # Use SimpleNamespace — MagicMock(name=) treats name as internal param,
+    # and MagicMock attributes aren't JSON-serializable (manifest stage crashes).
+    # spec= prevents auto-creation of last_timing, which would also be non-serializable.
+    mock_backend.info.return_value = SimpleNamespace(name="mock", device="cpu")
+
+    with patch("uitag.run.run_vision_detect") as mock_vision:
+        mock_vision.return_value = (mock_vision_dets, {})
+        from uitag.run import run_pipeline
+
+        result, annotated, manifest = run_pipeline(str(img_path), backend=mock_backend)
+
+    assert "florence2_filter_ms" in result.timing_ms
+    assert result.timing_ms["florence2_total"] == 1
+    assert result.timing_ms["florence2_filtered"] == 1
+    assert result.timing_ms["florence2_kept"] == 0
