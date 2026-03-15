@@ -70,3 +70,53 @@ def test_blocklist_case_insensitive():
     filtered, stats = filter_florence2(dets, image_width=1920, image_height=1080)
     assert len(filtered) == 0
     assert stats["florence2_blocklist_filtered"] == 1
+
+
+# --- Non-florence2 passthrough ---
+
+
+def test_non_florence2_detections_pass_through():
+    """Vision detections are never filtered."""
+    dets = [
+        _make_det("Submit", source="vision_text", w=400, h=300),  # Large bbox
+        _make_det("mobile phone", source="vision_rect", w=400, h=300),  # COCO label
+    ]
+    filtered, stats = filter_florence2(dets, image_width=1920, image_height=1080)
+    assert len(filtered) == 2
+    assert stats["florence2_total"] == 0
+
+
+# --- Stats accuracy ---
+
+
+def test_stats_dict_accurate():
+    """Stats dict correctly counts each filter layer."""
+    dets = [
+        _make_det("poster", x=0, y=0, w=500, h=500),       # Large + COCO → coverage
+        _make_det("human face", x=100, y=200, w=50, h=40),  # Small + COCO → blocklist
+        _make_det("toggle", x=300, y=400, w=30, h=20),      # Small + unknown → kept
+        _make_det("Submit", source="vision_text"),            # Non-florence2 → passthrough
+    ]
+    filtered, stats = filter_florence2(dets, image_width=1920, image_height=1080)
+    assert stats["florence2_total"] == 3
+    assert stats["florence2_coverage_filtered"] == 1
+    assert stats["florence2_blocklist_filtered"] == 1
+    assert stats["florence2_kept"] == 1
+    assert stats["florence2_labels_kept"] == ["toggle"]
+    assert len(filtered) == 2  # vision_text + toggle
+
+
+# --- Zero florence2 input ---
+
+
+def test_zero_florence2_is_noop():
+    """No florence2 detections → stats show all zeros, all detections kept."""
+    dets = [
+        _make_det("File", source="vision_text"),
+        _make_det("rect", source="vision_rect"),
+    ]
+    filtered, stats = filter_florence2(dets, image_width=1920, image_height=1080)
+    assert len(filtered) == 2
+    assert stats["florence2_total"] == 0
+    assert stats["florence2_kept"] == 0
+    assert stats["florence2_labels_kept"] == []
