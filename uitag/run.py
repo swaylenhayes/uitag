@@ -44,10 +44,15 @@ def run_pipeline(
     Args:
         backend: Optional DetectionBackend. If None, uses MLXBackend.
         no_florence: Skip Florence-2 entirely (stages 2, 3, 4a). Vision-only mode.
+            Auto-set to False when a backend is explicitly provided.
 
     Returns:
         (PipelineResult, annotated_image, manifest_json)
     """
+    # If caller explicitly provides a backend, they want Florence-2 to run
+    if backend is not None and no_florence:
+        no_florence = False
+
     timing = {}
     img = Image.open(image_path)
     w, h = img.size

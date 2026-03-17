@@ -43,6 +43,8 @@ def test_pipeline_accepts_backend_parameter(screenshot_path):
     from uitag.backends.mlx_backend import MLXBackend
 
     backend = MLXBackend()
-    result, annotated, manifest = run_pipeline(screenshot_path, backend=backend)
+    result, annotated, manifest = run_pipeline(
+        screenshot_path, backend=backend, no_florence=False
+    )
     assert len(result.detections) > 0
     assert "florence_total_ms" in result.timing_ms
