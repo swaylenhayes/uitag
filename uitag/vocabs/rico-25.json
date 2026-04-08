@@ -1,0 +1,15 @@
+{
+  "name": "rico-25",
+  "version": "1.0",
+  "description": "Google RICO UI taxonomy (2017) — 25 types, unvalidated stub",
+  "types": [
+    "text_button", "image", "icon", "text", "input", "list_item",
+    "advertisement", "pager_indicator", "web_view", "background_image",
+    "drawer", "modal", "card", "toolbar", "spinner", "date_picker",
+    "radio_button", "checkbox", "switch", "slider", "progress_bar",
+    "map_view", "button_bar", "video", "multi_tab"
+  ],
+  "prompt_template": "Classify the UI element in the center of this image.\n\nAnswer with exactly one JSON object and nothing else:\n{\"element_type\": \"<type>\"}\n\nelement_type must be exactly one of: {types_list}",
+  "fallback_type": "icon",
+  "padding_pct": 25
+}

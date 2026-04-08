@@ -62,6 +62,26 @@ def main():
         help="Enable YOLO detection (adds ~1-2s, trained on GroundCUA — off by default)",
     )
     parser.add_argument(
+        "--classify",
+        action="store_true",
+        help="Enable VLM element classification (requires a running VLM server)",
+    )
+    parser.add_argument(
+        "--classify-vocab",
+        default="leith-17",
+        help="Classification vocabulary name or path to JSON (default: leith-17)",
+    )
+    parser.add_argument(
+        "--vlm-url",
+        default="http://localhost:8000/v1",
+        help="VLM server URL (default: http://localhost:8000/v1)",
+    )
+    parser.add_argument(
+        "--vlm-model",
+        default=None,
+        help="VLM model name override (default: auto-detect from server)",
+    )
+    parser.add_argument(
         "--verbose", "-v", action="store_true", help="Show element list and timing"
     )
     parser.add_argument(
@@ -101,7 +121,8 @@ def main():
         img_parent = f" in {img_parent}/"
     print(f"Running pipeline on: {Path(image_path).name}{img_parent}")
     yolo_status = "enabled" if args.yolo else "off"
-    print(f"YOLO: {yolo_status} | OCR mode: {ocr_mode}")
+    classify_status = f"enabled ({args.classify_vocab})" if args.classify else "off"
+    print(f"YOLO: {yolo_status} | Classify: {classify_status} | OCR mode: {ocr_mode}")
     t0 = time.perf_counter()
 
     # Parse rescan ids if provided
@@ -120,6 +141,10 @@ def main():
         rescan_ids=rescan_ids,
         no_florence=True,
         use_yolo=args.yolo,
+        classify=args.classify,
+        classify_vocab=args.classify_vocab,
+        vlm_url=args.vlm_url,
+        vlm_model=args.vlm_model,
     )
 
     total_ms = (time.perf_counter() - t0) * 1000
@@ -137,7 +162,11 @@ def main():
 
     # Punchline
     count = len(result.detections)
-    done_line = f"Done: {count} detections in {total_s:.1f}s"
+    classified_count = sum(1 for d in result.detections if d.element_type is not None)
+    if classified_count > 0:
+        done_line = f"Done: {count} detections ({classified_count} classified) in {total_s:.1f}s"
+    else:
+        done_line = f"Done: {count} detections in {total_s:.1f}s"
     if sys.stdout.isatty():
         print(f"\n\033[1;32m{done_line}\033[0m")  # bold green
     else:
@@ -195,6 +224,10 @@ def main():
                     rescan_threshold=0.8,
                     no_florence=True,
                     use_yolo=args.yolo,
+                    classify=args.classify,
+                    classify_vocab=args.classify_vocab,
+                    vlm_url=args.vlm_url,
+                    vlm_model=args.vlm_model,
                 )
                 rescan_s = time.perf_counter() - t0_rescan
 

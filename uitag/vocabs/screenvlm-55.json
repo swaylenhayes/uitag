@@ -1,0 +1,21 @@
+{
+  "name": "screenvlm-55",
+  "version": "1.0",
+  "description": "ScreenVLM taxonomy (2024, arXiv 2602.14276) — 55 types, unvalidated stub",
+  "types": [
+    "button", "icon", "text", "input_field", "checkbox", "radio_button",
+    "toggle_switch", "dropdown", "slider", "tab", "link", "image",
+    "video_player", "map", "chart", "table", "list", "card",
+    "dialog", "tooltip", "popover", "menu", "menu_item", "toolbar",
+    "navigation_bar", "sidebar", "breadcrumb", "pagination", "stepper",
+    "progress_bar", "spinner", "badge", "tag", "avatar", "divider",
+    "spacer", "scroll_indicator", "carousel", "accordion", "tree_view",
+    "date_picker", "time_picker", "color_picker", "file_upload",
+    "search_bar", "notification", "toast", "banner", "alert",
+    "status_indicator", "rating", "code_block", "text_area",
+    "rich_text_editor", "canvas", "panel"
+  ],
+  "prompt_template": "Classify the UI element in the center of this image.\n\nAnswer with exactly one JSON object and nothing else:\n{\"element_type\": \"<type>\"}\n\nelement_type must be exactly one of: {types_list}",
+  "fallback_type": "icon",
+  "padding_pct": 25
+}

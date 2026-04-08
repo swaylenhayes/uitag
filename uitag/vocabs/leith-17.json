@@ -1,0 +1,14 @@
+{
+  "name": "leith-17",
+  "version": "1.0",
+  "description": "Leith orchestration taxonomy — 17-type accurate (MEM-087)",
+  "types": [
+    "button", "icon", "text_label", "text_field", "toggle",
+    "checkbox", "dropdown", "tab", "menu_item", "toolbar_button",
+    "link", "slider", "radio_button", "image", "separator",
+    "panel", "other"
+  ],
+  "prompt_template": "What type of UI element is shown in the center of this cropped screenshot? Answer with exactly one JSON object and nothing else:\n{\"element_type\": \"<type>\"}\n\nelement_type must be exactly one of: {types_list}",
+  "fallback_type": "other",
+  "padding_pct": 25
+}
