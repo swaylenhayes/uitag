@@ -3,5 +3,5 @@
 from uitag.run import run_pipeline
 from uitag.types import Detection, PipelineResult
 
-__version__ = "0.5.1"
+__version__ = "0.6.0"
 __all__ = ["Detection", "PipelineResult", "run_pipeline"]

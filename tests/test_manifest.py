@@ -41,6 +41,25 @@ def test_manifest_empty():
     assert data["element_count"] == 0
 
 
+def test_manifest_includes_element_type_when_set():
+    result = PipelineResult(
+        detections=[
+            Detection(
+                "", 100, 50, 24, 24, 0.87, "vision_rect", som_id=1, element_type="icon"
+            ),
+            Detection("File", 10, 5, 40, 20, 0.95, "vision_text", som_id=2),
+        ],
+        image_width=1920,
+        image_height=1080,
+    )
+    manifest = generate_manifest(result)
+    data = json.loads(manifest)
+    # vision_rect with element_type set
+    assert data["elements"][0]["element_type"] == "icon"
+    # vision_text without element_type — key should be absent
+    assert "element_type" not in data["elements"][1]
+
+
 def test_manifest_includes_backend_info():
     """Manifest should include backend name when present in timing."""
     result = PipelineResult(

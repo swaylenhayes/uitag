@@ -17,6 +17,7 @@ class Detection:
         str  # "vision_text", "vision_text_block", "vision_rect", "florence2", "yolo"
     )
     som_id: int | None = None
+    element_type: str | None = None
 
 
 @dataclass

@@ -16,11 +16,15 @@ Detection coverage was evaluated on [ScreenSpot-Pro](https://huggingface.co/data
 
 | Mode | Time | Detections | Coverage | Use Case |
 | ---- | ---- | ---------- | -------- | -------- |
-| Vision + YOLO (`--yolo`) | ~5s | ~300 | 90.8% | Full coverage including icons |
+| Vision + YOLO + VLM (`--yolo --vlm`) | ~15s | ~300 | 90.8% | Full coverage + element typing |
+| Vision + YOLO (`--yolo`) | ~3s | ~300 | 90.8% | Full coverage including icons |
+| Vision + VLM (`--vlm`) | ~10s | ~150 | 57.3% | Element typing without YOLO |
 | Vision-only (default) | ~1.0s | ~150 | 57.3% | Fast, no model download needed |
 | Fast OCR (`--fast`) | ~0.4s | ~140 | — | Interactive use, rapid iteration |
 
-Vision-only is the default. YOLO is opt-in via `--yolo` (requires `pip install uitag[yolo]`). Florence-2 (`--florence`) is a legacy option superseded by YOLO.
+All times are warm (models loaded). First invocation with YOLO adds ~14s for model loading.
+
+Vision-only is the default. YOLO is opt-in via `--yolo` (requires `pip install uitag[yolo]`). VLM is opt-in via `--vlm` (requires a running VLM server). Florence-2 (`--florence`) is a legacy option superseded by YOLO.
 
 ---
 
@@ -94,6 +98,41 @@ UI-Vision "basic" annotations label 1-3 target elements per image. High recall i
 
 ---
 
+## VLM Classification
+
+Detection tells you _where_ UI elements are. VLM classification (`--vlm`) tells you _what_ they are — button, icon, slider, text_field. Each non-text detection is cropped with padding and sent to an OpenAI-compatible VLM server, which returns a type label from a configurable vocabulary. Text detections are skipped because OCR already provides their labels.
+
+The default vocabulary is `leith-17` (17 UI element types). Alternative vocabularies can be loaded via `--vlm-vocab`. VLM requires a separate server process — uitag does not embed the model.
+
+### Accuracy
+
+MAI-UI-2B-bf16-v2 was evaluated on 206 icon crops from the ScreenSpot-Pro macOS subset (604 images, 9 apps). Strict accuracy: the VLM's type label exactly matches the hand-labeled ground truth.
+
+| Metric | Value |
+| ------ | ----- |
+| Strict accuracy | 96.1% (198/206) |
+| Reproducibility | Zero flips across 3 runs (618 classifications) |
+| Model memory | 5.3 GB |
+
+The 8 misclassified crops (3.9%) are consistently wrong across runs — characterizable errors, not random noise.
+
+### Timing
+
+Measured on 4 images (synth control panels, CJK UI, game controller overlay) on an M2 Max with 96 GB unified memory. MAI-UI-2B-bf16-v2 served via vllm-mlx on localhost. All times are warm (server loaded, YOLO model cached).
+
+| Config | Detections (avg) | Typed | Time (avg) |
+| ------ | ---------------- | ----- | ---------- |
+| Apple Vision | 75 | — | 0.5s |
+| Apple Vision + YOLO | 82 | — | 2.2s |
+| Apple Vision + VLM | 75 | 35/35 | 10.0s |
+| Apple Vision + YOLO + VLM | 82 | 42/42 | 13.7s |
+
+VLM adds ~0.27s per element, sequential. On a screenshot with 40 classifiable elements, that is roughly 11 seconds of VLM inference on top of the detection pipeline. First invocation with YOLO adds ~14s for model loading; VLM server startup is separate and depends on the serving framework.
+
+Detection coverage is unchanged by VLM — the same elements are found with or without `--vlm`. VLM only adds type labels to existing detections.
+
+---
+
 ## Stage Timing
 
 ### Vision + YOLO Pipeline
@@ -162,6 +201,12 @@ uitag screenshot.png -o out/
 
 # With YOLO
 uitag screenshot.png --yolo -o out/
+
+# With VLM (requires running VLM server on port 8000)
+uitag screenshot.png --vlm -o out/
+
+# Full stack
+uitag screenshot.png --yolo --vlm -o out/
 
 # Fast mode
 uitag screenshot.png --fast -o out/

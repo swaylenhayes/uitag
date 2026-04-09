@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "uitag"
-version = "0.5.1"
+version = "0.6.0"
 description = "UI element detection for macOS — Apple Vision + fine-tuned YOLO, on-device, ~1-5s"
 readme = "README.md"
 license = "MIT"
@@ -51,7 +51,7 @@ where = ["."]
 include = ["uitag*"]
 
 [tool.setuptools.package-data]
-uitag = ["tools/*.swift", "*.json", "assets/*.png", "models/*.pt"]
+uitag = ["tools/*.swift", "*.json", "assets/*.png", "models/*.pt", "vocabs/*.json"]
 
 [tool.ruff]
 line-length = 88

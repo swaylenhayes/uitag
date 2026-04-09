@@ -55,6 +55,24 @@ def test_invalid_manifest_fails_schema(schema):
         jsonschema.validate(bad_manifest, schema)
 
 
+def test_manifest_with_element_type_passes_schema(schema):
+    """A manifest with element_type should validate."""
+    result = PipelineResult(
+        detections=[
+            Detection(
+                "", 50, 50, 24, 24, 0.8, "vision_rect", som_id=1, element_type="icon"
+            ),
+            Detection("OK", 100, 100, 40, 20, 0.9, "vision_text", som_id=2),
+        ],
+        image_width=1920,
+        image_height=1080,
+    )
+    manifest = json.loads(generate_manifest(result))
+    jsonschema.validate(manifest, schema)
+    assert manifest["elements"][0]["element_type"] == "icon"
+    assert "element_type" not in manifest["elements"][1]
+
+
 def test_missing_required_field_fails_schema(schema):
     """A manifest missing required fields should fail."""
     incomplete = {"image_width": 1920}

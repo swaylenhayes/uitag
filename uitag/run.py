@@ -27,6 +27,10 @@ def run_pipeline(
     rescan_ids: list[int] | None = None,
     no_florence: bool = True,
     use_yolo: bool = False,
+    vlm: bool = False,
+    vlm_vocab: str = "leith-17",
+    vlm_url: str = "http://localhost:8000/v1",
+    vlm_model: str | None = None,
 ) -> tuple[PipelineResult, Image.Image, str]:
     """Run the full detection pipeline on a screenshot.
 
@@ -40,6 +44,7 @@ def run_pipeline(
     4b. Rescan (optional)
     4c. OCR correction
     4d. Text block grouping
+    4e. VLM classification (if vlm)
     5. Annotate SoM
     6. Generate manifest
 
@@ -48,6 +53,10 @@ def run_pipeline(
         no_florence: Skip Florence-2 entirely (stages 2, 3, 4a). Vision-only mode.
             Auto-set to False when a backend is explicitly provided.
         use_yolo: Enable YOLO tiled detection (adds ~1-2s).
+        vlm: Enable VLM element classification (Stage 4e).
+        vlm_vocab: Vocabulary name or path (default: "leith-17").
+        vlm_url: OpenAI-compatible VLM server URL.
+        vlm_model: Model name override (None = auto-detect).
 
     Returns:
         (PipelineResult, annotated_image, manifest_json)
@@ -158,6 +167,24 @@ def run_pipeline(
     timing["group_ms"] = round((time.perf_counter() - t0) * 1000, 1)
     timing["groups_formed"] = groups_formed
 
+    # Stage 4e: VLM classification (optional)
+    if vlm:
+        from uitag.classify import classify_detections
+        from uitag.vocab import load_vocab
+
+        vocab = load_vocab(vlm_vocab)
+        t0 = time.perf_counter()
+        merged, vlm_stats = classify_detections(
+            merged, img, vocab, vlm_url=vlm_url, vlm_model=vlm_model
+        )
+        timing["vlm_ms"] = round((time.perf_counter() - t0) * 1000, 1)
+        timing["vlm_total"] = vlm_stats["classifiable"]
+        timing["vlm_typed"] = vlm_stats["classified"]
+        timing["vlm_fallback"] = vlm_stats["fallback"]
+        timing["vlm_errors"] = vlm_stats["errors"]
+        if vlm_stats["skipped_reason"]:
+            timing["vlm_skipped"] = vlm_stats["skipped_reason"]
+
     # Build result
     result = PipelineResult(
         detections=merged,
@@ -172,6 +199,9 @@ def run_pipeline(
     timing["annotate_ms"] = round((time.perf_counter() - t0) * 1000, 1)
 
     # Stage 6: Manifest
+    # Note: manifest_ms is recorded after serialization, so it appears in the
+    # runtime object but not in the persisted JSON (it cannot include its own
+    # generation time). This is intentional — see code-review-2026-04-08.
     t0 = time.perf_counter()
     manifest = generate_manifest(result)
     timing["manifest_ms"] = round((time.perf_counter() - t0) * 1000, 1)

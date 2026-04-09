@@ -58,6 +58,10 @@
             "type": "string",
             "description": "Detection source",
             "enum": ["vision_text", "vision_text_block", "vision_rect", "florence2", "yolo"]
+          },
+          "element_type": {
+            "type": "string",
+            "description": "Classified UI element type (present only with --vlm)"
           }
         },
         "additionalProperties": false
