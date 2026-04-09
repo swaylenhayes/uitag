@@ -45,7 +45,7 @@ Measured on [ScreenSpot-Pro](https://huggingface.co/datasets/likaixin/ScreenSpot
 | Vision + YOLO (`--yolo`) | 92.7% | 87.6% | 90.8%   | 5.8%           |
 | Vision-only (default)    | 66.4% | 42.5% | 57.3%   | 32.9%          |
 
-These numbers measure detection _coverage_ — whether the element was found — not grounding accuracy (whether a model can follow an instruction to click a specific element). Detection coverage is the ceiling for any downstream agent built on uitag's SoM annotations.
+These numbers measure detection _coverage_ — whether the element was found — not grounding accuracy (whether a model can follow a natural language instruction to click a specific element). The [ScreenSpot-Pro leaderboard](https://gui-agent.github.io/grounding-leaderboard) ranks grounding accuracy, where the current SOTA is 78.5% (Holo2-235B). Detection coverage is the ceiling for any grounding system built on uitag's annotations: no agent using uitag's detections can exceed 90.8% on ScreenSpot-Pro, because that is the fraction of targets with a covering bounding box. A grounding evaluation using uitag as the detection layer is planned.
 
 Per-application results on the hardest cases:
 
